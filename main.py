@@ -37,10 +37,15 @@ async def on_message(message):
     value = msg.split("!power ",1)[1]
     if value.lower() == "on":
       db["responding"] = True
-      await message.channel.send("MST is now On. Happy storytelling!")
+      embedVar = discord.Embed(title="Power", color=0x00ff00)
+      embedVar.add_field(name="Responding: ", value="On", inline=False)
+      await message.channel.send(embed=embedVar)
     elif value.lower() == "off":
       db["responding"] = False
-      await message.channel.send("MST is now off.")
+      embedVar = discord.Embed(title="Power", color=0xFF0000)
+      embedVar.add_field(name="Responding: ", value="Off", inline=False)
+      await message.channel.send(embed=embedVar)
+      
     else:
       return
     
@@ -57,12 +62,17 @@ async def on_message(message):
     await message.delete()
 
   if msg.startswith("!help"):
-    await message.channel.send("Use !story for a short randomised 3/4 emoji story \n use !add then an emoji (without the colons - has to be a discord emoji - customs not supported yet) to add it to the generator e.g. !add weary \n use !view to view all manually added emojis and their index i.e not all stories with these will make sense \n use !del then the index of an item to delete e.g. !del 1 to delete first item \n use !power on / !power off to turn bot on or off")
+    embedVar = discord.Embed(title="Help", color=0x00ff00)
+    embedVar.add_field(name="Responding: ", value="Use !story for a short randomised 3/4 emoji story \n use !add then an emoji (without the colons - has to be a discord emoji - customs not supported yet) to add it to the generator e.g. !add weary \n use !view to view all manually added emojis and their index i.e not all stories with these will make sense \n use !del then the index of an item to delete e.g. !del 1 to delete first item \n use !power on / !power off to turn bot on or off", inline=True)
+    await message.channel.send(embed=embedVar)
+  
 
   if msg.startswith("!add"):
     newEmoji = msg.split("!add ", 1)[1]
     add_emoji(newEmoji)
-    await message.channel.send("New emoji added: :" + newEmoji + ":")
+    embedVar = discord.Embed(title="Added", color=0x00ff00)
+    embedVar.add_field(name="New Emoji Added: ", value=":" + newEmoji + ":", inline=True)
+    await message.channel.send(embed=embedVar)
 
   if msg.startswith("!del"):
     emoji = []
@@ -70,14 +80,17 @@ async def on_message(message):
       index = int(msg.split("!del", 1)[1])
       del_emoji(index - 1)
       emoji = db["emoji"]
-      await message.channel.send("New user emojis: ")
-      await message.channel.send(emoji)
+      embedVar = discord.Embed(title="Delted", color=0xFF0000)
+      embedVar.add_field(name="Emoji Deleted - New List: ", value=emoji, inline=True)
+      await message.channel.send(embed=embedVar)
 
-  if msg.startswith("!view"):
+  if msg.startswith("!view") or msg.startswith("!list"):
     emoji = []
     if "emoji" in db.keys():
       emoji = db["emoji"]
-    await message.channel.send(emoji)
+    embedVar = discord.Embed(title="List", color=0xEEEEEE)
+    embedVar.add_field(name="List of custom emojis: ", value=emoji, inline=True)
+    await message.channel.send(embed=embedVar)
 
 
 
